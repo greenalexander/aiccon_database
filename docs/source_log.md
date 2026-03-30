@@ -1,5 +1,6 @@
 # Source Log
 This log tracks the "last successful update" for every dataset to ensure we aren't using stale data.
+MUST BE UPDATED AFTER EACH UPDATE. 
 
 | Date | Domain | Source | Dataset Code | Status | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
