@@ -5,8 +5,8 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 def build_database():
-    load_dotenv()
-    with open("settings.yaml", "r") as f:
+    load_dotenv("config/.env")
+    with open("config/settings.yaml", "r") as f:
         config = yaml.safe_load(f)
     
     root_path = Path(os.getenv("SHAREPOINT_ROOT", "."))
