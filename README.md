@@ -227,13 +227,18 @@ Phase 0 — Foundations (do once, reused by all future domains)
 Step 1: requirements.txt and .gitignore
 Step 2: config/settings.yaml and config/.env.example
 Step 3: processing/mappings/ — the three core CSV mapping tables
-Step 4: ingestion/loaders/base_loader.py — shared loading utilities [ALEX check]
-Step 5: ingestion/loaders/sharepoint_uploader.py — writes parquet to SharePoint [ALEX check]
+Step 4: ingestion/loaders/base_loader.py — shared loading utilities 
+Step 5: ingestion/loaders/sharepoint_uploader.py — writes parquet to SharePoint
 
 Phase 1 — Ingest (social economy data only)
 
-Step 6: ingestion/api_sources/social_economy/eurostat.py — pull NACE Q + S94 employment at NUTS0/NUTS2 for all EU countries [ALEX check]
-Step 7: ingestion/api_sources/social_economy/istat.py — pull ISTAT nonprofit census and cooperative data at NUTS3, with gender [ALEX check]
+Step 6: ingestion/api_sources/social_economy/eurostat.py — pull NACE Q + S94 employment at NUTS0/NUTS2 for all EU countries 
+Step 7: ingestion/api_sources/social_economy/istat.py — pull ISTAT nonprofit census and cooperative data at NUTS3, with gender 
+
+ALEX:
+-- update readme and yaml on the basis of eurostat: changed datasets and filters for eurostat. 
+-- Same thing with readme and yaml for istat
+
 
 Phase 2 — Process
 

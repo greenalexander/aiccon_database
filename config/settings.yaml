@@ -40,19 +40,16 @@ eurostat:
     - dataset: "nama_10r_3empers"
       label: "Regional employment by NACE (NUTS2)"
       filters:
-        nace_r2: ["Q", "P", "S94"]   # Health/social work, Education, Membership orgs
+        nace_r2: ["O-Q", "R-U"]   # Health/social work, Education, Membership orgs
         geo_level: "NUTS2"
-        unit: "THS_PER"              # Thousands of persons
+        unit: "THS"              # Thousands of persons
     # Number of enterprises by NACE and NUTS2
     - dataset: "bd_enace2_r3"
       label: "Enterprises by NACE and region (NUTS2)"
       filters:
         nace_r2: ["Q", "S94"]
         geo_level: "NUTS2"
-    # Employment in the social economy (Eurostat social economy satellite account pilot)
-    - dataset: "soc_econ_emp"
-      label: "Social economy employment (pilot satellite account)"
-      filters: {}                    # Take all available — dataset is already scoped
+
 
 # ── ISTAT SDMX API ────────────────────────────────────────────────────────────
 istat:
