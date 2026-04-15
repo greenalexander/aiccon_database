@@ -221,7 +221,7 @@ def fetch_volunteering_by_age_gender(session) -> pd.DataFrame:
         start_period="2015",
     )
     if not df.empty:
-        df.attrs["dataflow_id"]  = "85_84_DF_DCSA_VOLON1_1"
+        df.attrs["dataset_code"] = "85_84_DF_DCSA_VOLON1_1"
         df.attrs["description"]  = "Volunteering rate by gender, age group, and form (organised / direct)"
         df.attrs["key_metric"]   = "HAUA_15 = % of population ≥15 who volunteered"
         df.attrs["form_labels"]  = FORM_VOLUNT_LABELS
@@ -244,7 +244,7 @@ def fetch_volunteering_activity_type(session) -> pd.DataFrame:
         start_period="2015",
     )
     if not df.empty:
-        df.attrs["dataflow_id"] = "85_84_DF_DCSA_VOLON1_2"
+        df.attrs["dataset_code"] = "85_84_DF_DCSA_VOLON1_2"
         df.attrs["description"] = "Type of activity performed by volunteers, by gender and form"
     return df
 
@@ -263,7 +263,7 @@ def fetch_volunteering_years_active(session) -> pd.DataFrame:
         start_period="2015",
     )
     if not df.empty:
-        df.attrs["dataflow_id"] = "85_84_DF_DCSA_VOLON1_3"
+        df.attrs["dataset_code"] = "85_84_DF_DCSA_VOLON1_3"
         df.attrs["description"] = "Years of volunteering activity by gender and form"
     return df
 
@@ -282,7 +282,7 @@ def fetch_volunteering_by_education_labour(session) -> pd.DataFrame:
         start_period="2015",
     )
     if not df.empty:
-        df.attrs["dataflow_id"] = "85_84_DF_DCSA_VOLON1_4"
+        df.attrs["dataset_code"] = "85_84_DF_DCSA_VOLON1_4"
         df.attrs["description"] = "Volunteering by educational level and labour status"
     return df
 
@@ -301,7 +301,7 @@ def fetch_volunteering_by_household(session) -> pd.DataFrame:
         start_period="2015",
     )
     if not df.empty:
-        df.attrs["dataflow_id"] = "85_84_DF_DCSA_VOLON1_5"
+        df.attrs["dataset_code"] = "85_84_DF_DCSA_VOLON1_5"
         df.attrs["description"] = "Volunteering by household size and economic resources"
     return df
 
@@ -320,7 +320,7 @@ def fetch_volunteering_by_region(session) -> pd.DataFrame:
         start_period="2015",
     )
     if not df.empty:
-        df.attrs["dataflow_id"]       = "85_84_DF_DCSA_VOLON1_6"
+        df.attrs["dataset_code"]       = "85_84_DF_DCSA_VOLON1_6"
         df.attrs["description"]       = "Volunteering rate by region and municipality type"
         df.attrs["territorial_note"]  = "Regional level (NUTS2) + municipality type"
     return df
@@ -346,7 +346,7 @@ def fetch_org_volunteering_by_sector(session) -> pd.DataFrame:
         start_period="2015",
     )
     if not df.empty:
-        df.attrs["dataflow_id"] = "85_171_DF_DCSA_VOLON_ORG1_1"
+        df.attrs["dataset_code"] = "85_171_DF_DCSA_VOLON_ORG1_1"
         df.attrs["description"] = (
             "Organised volunteering by main activity sector and multi-membership, by gender"
         )
@@ -374,7 +374,7 @@ def fetch_org_volunteering_by_org_type(session) -> pd.DataFrame:
         start_period="2015",
     )
     if not df.empty:
-        df.attrs["dataflow_id"] = "85_171_DF_DCSA_VOLON_ORG1_2"
+        df.attrs["dataset_code"] = "85_171_DF_DCSA_VOLON_ORG1_2"
         df.attrs["description"] = "Organised volunteering by institutional type (ODV, APS, cooperatives…)"
         df.attrs["legal_framework"] = "D.Lgs. 117/2017 — Codice del Terzo Settore"
     return df
@@ -395,7 +395,7 @@ def fetch_org_volunteering_motivations(session) -> pd.DataFrame:
         start_period="2015",
     )
     if not df.empty:
-        df.attrs["dataflow_id"] = "85_171_DF_DCSA_VOLON_ORG1_3"
+        df.attrs["dataset_code"] = "85_171_DF_DCSA_VOLON_ORG1_3"
         df.attrs["description"] = "Motivations for organised volunteering, by gender"
     return df
 
@@ -415,7 +415,7 @@ def fetch_org_volunteering_personal_impact(session) -> pd.DataFrame:
         start_period="2015",
     )
     if not df.empty:
-        df.attrs["dataflow_id"] = "85_171_DF_DCSA_VOLON_ORG1_4"
+        df.attrs["dataset_code"] = "85_171_DF_DCSA_VOLON_ORG1_4"
         df.attrs["description"] = "Personal impact reported by organised volunteers, by gender"
     return df
 
@@ -437,7 +437,7 @@ def fetch_associationism_by_age(session) -> pd.DataFrame:
         start_period="2010",
     )
     if not df.empty:
-        df.attrs["dataflow_id"] = "83_63_DF_DCCV_AVQ_PERSONE_129"
+        df.attrs["dataset_code"] = "83_63_DF_DCCV_AVQ_PERSONE_129"
         df.attrs["description"] = "Association membership rate by age group"
         df.attrs["survey"]      = "Aspetti della Vita Quotidiana (AVQ)"
     return df
@@ -457,7 +457,7 @@ def fetch_associationism_by_age_education(session) -> pd.DataFrame:
         start_period="2010",
     )
     if not df.empty:
-        df.attrs["dataflow_id"] = "83_63_DF_DCCV_AVQ_PERSONE_130"
+        df.attrs["dataset_code"] = "83_63_DF_DCCV_AVQ_PERSONE_130"
         df.attrs["description"] = "Association membership by age and educational level"
         df.attrs["survey"]      = "Aspetti della Vita Quotidiana (AVQ)"
     return df
@@ -478,7 +478,7 @@ def fetch_associationism_by_labour_status(session) -> pd.DataFrame:
         start_period="2010",
     )
     if not df.empty:
-        df.attrs["dataflow_id"] = "83_63_DF_DCCV_AVQ_PERSONE_131"
+        df.attrs["dataset_code"] = "83_63_DF_DCCV_AVQ_PERSONE_131"
         df.attrs["description"] = "Association membership by occupational status"
         df.attrs["survey"]      = "Aspetti della Vita Quotidiana (AVQ)"
     return df
@@ -499,7 +499,7 @@ def fetch_associationism_by_region(session) -> pd.DataFrame:
         start_period="2010",
     )
     if not df.empty:
-        df.attrs["dataflow_id"]      = "83_63_DF_DCCV_AVQ_PERSONE_132"
+        df.attrs["dataset_code"]      = "83_63_DF_DCCV_AVQ_PERSONE_132"
         df.attrs["description"]      = "Association membership by region and municipality type"
         df.attrs["survey"]           = "Aspetti della Vita Quotidiana (AVQ)"
         df.attrs["territorial_note"] = "Regional level (NUTS2) + municipality type"
