@@ -1,0 +1,38 @@
+nace_code,level,parent_code,label_it,label_en,social_economy_relevant,relevance_note
+P,section,,Istruzione,Education,TRUE,Core social economy sector — education activities
+P85,division,P,Istruzione,Education,TRUE,
+P85_1,group,P85,Istruzione prescolastica,Pre-primary education,TRUE,
+P85_2,group,P85,Istruzione primaria,Primary education,TRUE,
+P85_3,group,P85,Istruzione secondaria di primo grado,Lower secondary education,TRUE,
+P85_4,group,P85,Istruzione secondaria di secondo grado,Upper secondary education,TRUE,
+P85_5,group,P85,Istruzione post-secondaria non terziaria,Post-secondary non-tertiary education,TRUE,
+P85_6,group,P85,Istruzione terziaria,Tertiary education,TRUE,
+P85_9,group,P85,Altre forme di istruzione,Other education,TRUE,"Includes music schools, driving schools"
+Q,section,,Sanità e assistenza sociale,Human health and social work activities,TRUE,Core social economy sector
+Q86,division,Q,Assistenza sanitaria,Human health activities,TRUE,
+Q86_1,group,Q86,Servizi ospedalieri,Hospital activities,TRUE,
+Q86_2,group,Q86,Attività mediche e odontoiatriche,Medical and dental practice activities,TRUE,
+Q86_9,group,Q86,Altre attività di assistenza sanitaria,Other human health activities,TRUE,
+Q87,division,Q,Servizi di assistenza sociale con alloggio,Residential care activities,TRUE,Primary NACE for cooperative sociali tipo A
+Q87_1,group,Q87,Assistenza infermieristica con alloggio,Residential nursing care activities,TRUE,
+Q87_2,group,Q87,Assistenza ai disabili mentali e tossicodipendenti,Residential care for mental retardation/substance abuse,TRUE,
+Q87_3,group,Q87,Assistenza agli anziani e ai disabili,Residential care for the elderly and disabled,TRUE,
+Q87_9,group,Q87,Altre strutture di assistenza sociale con alloggio,Other residential care activities,TRUE,
+Q88,division,Q,Assistenza sociale senza alloggio,Social work activities without accommodation,TRUE,Primary NACE for cooperative sociali tipo A and ODV/APS
+Q88_1,group,Q88,Assistenza sociale senza alloggio per anziani e disabili,Social work for elderly and disabled without accommodation,TRUE,
+Q88_9,group,Q88,Altre forme di assistenza sociale senza alloggio,Other social work without accommodation,TRUE,Includes child day care — relevant for ETS
+S94,division,S,Attività di organizzazioni associative,Activities of membership organisations,TRUE,Core social economy sector — ODV APS associations
+S94_1,group,S94,Attività di organizzazioni economiche e datoriali,Activities of business/employers membership organisations,FALSE,Not typically third sector
+S94_11,group,S94_1,Attività di organizzazioni economiche e datoriali,Business and employers membership organisations,FALSE,
+S94_12,group,S94_1,Attività di organizzazioni professionali,Professional membership organisations,FALSE,
+S94_2,group,S94,Attività di sindacati,Activities of trade unions,FALSE,Trade unions — excluded from ETS scope
+S94_9,group,S94,Attività di altre organizzazioni associative,Activities of other membership organisations,TRUE,Includes cultural religious civic associations — core third sector
+S94_91,group,S94_9,Attività di organizzazioni religiose,Activities of religious organisations,TRUE,Can register as ETS
+S94_92,group,S94_9,Attività di organizzazioni politiche,Activities of political organisations,FALSE,Excluded from ETS
+S94_99,group,S94_9,Attività di altre organizzazioni associative nca,Activities of other membership organisations nec,TRUE,Residual — includes many ODV and APS
+S96,division,S,Altre attività di servizi per la persona,Other personal service activities,TRUE,Included in sbs_r_nuts2021 fetch — covers personal services often delivered by social enterprises and cooperatives
+R90,division,R,Attività creative artistiche e di intrattenimento,Creative arts and entertainment activities,FALSE,Included only when linked to ETS cultural activities
+R91,division,R,Attività di biblioteche archivi musei,Libraries archives museums and other cultural activities,TRUE,Relevant for cultural ETS — fondazioni culturali
+S95,division,S,Riparazione di computer e beni personali,Repair of computers and personal and household goods,FALSE,Not relevant
+O84,division,O,Pubblica amministrazione e difesa,Public administration and defence,FALSE,Public sector — excluded from social economy scope
+O-U,aggregate,,Pubblica amm. istruzione sanità e altri servizi,Public admin education health and other services,partial,Eurostat nama_10r_3empers aggregate — contains P Q and S94 but not separable at NUTS2

@@ -238,14 +238,19 @@ Step 7: ingestion/api_sources/social_economy/istat.py — pull ISTAT nonprofit c
 ALEX:
 -- update readme and yaml on the basis of eurostat: changed datasets and filters for eurostat. 
 -- Same thing with readme and yaml for istat
+-- update docs/source_log.md
+-- update mappings/domain_sources.csv
 
 
 Phase 2 — Process
 
-Step 8: processing/harmonise/nuts_mapper.py — ISTAT codes → NUTS codes [Alex check]
-Step 9: processing/harmonise/legal_form.py — Italian legal forms → unified categories [Alex check]
-Step 10: processing/integrate/merge_sources.py — combine Eurostat + ISTAT with priority rules [Alex check]
-Step 11: processing/pipeline.py — wire steps 6–10 together for social economy [Alex check]
+Step 8: processing/harmonise/nuts_mapper.py — ISTAT codes → NUTS codes 
+Step 9: processing/harmonise/legal_form.py — Italian legal forms → unified categories 
+Step 10: processing/integrate/merge_sources.py — combine Eurostat + ISTAT with priority rules 
+Step 11: processing/pipeline.py — wire steps 6–10 together for social economy
+
+ALEX:
+-- check output here. 
 
 Phase 3 — Database
 
@@ -253,10 +258,21 @@ Step 12: database/schema/dimensions.sql — dim_geography, dim_time, dim_source 
 Step 13: database/schema/fact_tables.sql — fact_social_economy [Alex check]
 Step 14: database/schema/views.sql — pre-built views useful for PowerBI [Alex check]
 Step 15: database/build_db.py — reads processed parquet, builds .duckdb [Alex check]
+ALEX: 
+-- check here. open .duckdb file directly with duckdb's CLI or dbeaver and run sql against it. Last checkpoint before powerbi where we catch schema problems. 
+
 Step 16: database/tests/ — basic integrity checks [Alex check]
+- Alex: integrity checks, whether programmatically the database is sane (row counts, null rates, key uniqueness) rather than manual inspection. 
+
+27/04: 
+1. I am yet to do the check after step 15
+2. One problem is that build_db.py is still dropping some countries. 
+3. Other problem is that the dataset ids are the specific codes, so it doesn't have the source as a separate column. I think either the mapping file should be changed, or else I need to do something with build_db.py that takes the source itself (eurostat, istat) separately. Check the Gem "Troubleshooting DuckDB temporary..."
+Both of these problems are apparent from the integrity_tests.py, but everything else looks good. 
 
 Phase 4 — Entry point + docs
 
 Step 17: run_pipeline.py — single command to run everything [Alex check]
 Step 18: docs/data_dictionary.md — field definitions for the social economy tables [Alex check]
 Step 19: docs/source_log.md and docs/decisions.md — templates to fill in [Alex check]
+- ALEX: check again the files within each folder, names, etc. 

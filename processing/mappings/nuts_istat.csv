@@ -30,7 +30,7 @@ ITG,Isole,,1,Isole,Islands,,,Isole
 003,Novara,ITC13,3,Novara,Novara,ITC1,Piemonte,Nord-Ovest
 004,Cuneo,ITC14,3,Cuneo,Cuneo,ITC1,Piemonte,Nord-Ovest
 005,Asti,ITC15,3,Asti,Asti,ITC1,Piemonte,Nord-Ovest
-006,Alessandria,ITC16,3,Alessandria,Alessandria,ITC1,Piemonte,Nord-Ovest
+006,Alessandria,ITC16,3,Alessandria,Alessandria,ITC1,Piemonte,Nord-Ovest;;
 096,Biella,ITC17,3,Biella,Biella,ITC1,Piemonte,Nord-Ovest
 103,Verbano-Cusio-Ossola,ITC18,3,Verbano-Cusio-Ossola,Verbano-Cusio-Ossola,ITC1,Piemonte,Nord-Ovest
 007,Aosta,ITC20,3,Aosta,Aosta,ITC2,Valle d'Aosta,Nord-Ovest
@@ -132,3 +132,33 @@ ITG,Isole,,1,Isole,Islands,,,Isole
 092,Cagliari,ITG27,3,Cagliari,Cagliari,ITG2,Sardegna,Isole
 095,Oristano,ITG28,3,Oristano,Oristano,ITG2,Sardegna,Isole
 111,Sud Sardegna,ITG29,3,Sud Sardegna,South Sardinia,ITG2,Sardegna,Isole
+IT,Italia,IT,0,Italia,Italy,,,
+ITC,Nord-Ovest,ITC,1,Nord-Ovest,North-West,,,Nord-Ovest
+ITD,Nord-Est,ITH,1,Nord-Est,North-East,,,Nord-Est
+ITE,Centro,ITI,1,Centro,Centre,,,Centro
+ITF,Sud,ITF,1,Sud,South,,,Sud
+ITG,Isole,ITG,1,Isole,Islands,,,Isole
+ITC1,Piemonte,ITC1,2,Piemonte,Piedmont,ITC1,Piemonte,Nord-Ovest
+ITC2,Valle d'Aosta,ITC2,2,Valle d'Aosta,Aosta Valley,ITC2,Valle d'Aosta,Nord-Ovest
+ITC3,Liguria,ITC3,2,Liguria,Liguria,ITC3,Liguria,Nord-Ovest
+ITC4,Lombardia,ITC4,2,Lombardia,Lombardy,ITC4,Lombardia,Nord-Ovest
+ITD1,Provincia Autonoma di Bolzano,ITH1,2,Bolzano/Bozen,South Tyrol,ITH1,Trentino-Alto Adige,Nord-Est
+ITD2,Provincia Autonoma di Trento,ITH2,2,Trento,Trento,ITH2,Trentino-Alto Adige,Nord-Est
+ITD3,Veneto,ITH3,2,Veneto,Veneto,ITH3,Veneto,Nord-Est
+ITD4,Friuli-Venezia Giulia,ITH4,2,Friuli-Venezia Giulia,Friuli-Venezia Giulia,ITH4,Friuli-Venezia Giulia,Nord-Est
+ITD5,Emilia-Romagna,ITH5,2,Emilia-Romagna,Emilia-Romagna,ITH5,Emilia-Romagna,Nord-Est
+ITE1,Toscana,ITI1,2,Toscana,Tuscany,ITI1,Toscana,Centro
+ITE2,Umbria,ITI2,2,Umbria,Umbria,ITI2,Umbria,Centro
+ITE3,Marche,ITI3,2,Marche,Marche,ITI3,Marche,Centro
+ITE4,Lazio,ITI4,2,Lazio,Lazio,ITI4,Lazio,Centro
+ITF1,Abruzzo,ITF1,2,Abruzzo,Abruzzo,ITF1,Abruzzo,Sud
+ITF2,Molise,ITF2,2,Molise,Molise,ITF2,Molise,Sud
+ITF3,Campania,ITF3,2,Campania,Campania,ITF3,Campania,Sud
+ITF4,Puglia,ITF4,2,Puglia,Apulia,ITF4,Puglia,Sud
+ITF5,Basilicata,ITF5,2,Basilicata,Basilicata,ITF5,Basilicata,Sud
+ITF6,Calabria,ITF6,2,Calabria,Calabria,ITF6,Calabria,Sud
+ITG1,Sicilia,ITG1,2,Sicilia,Sicily,ITG1,Sicilia,Isole
+ITG2,Sardegna,ITG2,2,Sardegna,Sardinia,ITG2,Sardegna,Isole
+ITDA,Trentino-Alto Adige,ITH1;ITH2,2,Trentino-Alto Adige/Südtirol,Trentino-South Tyrol,ITH1;ITH2,Trentino-Alto Adige,Nord-Est
+ITCD,Nord,ITC;ITH,1,Nord,North,,,Nord
+ITFG,Mezzogiorno,ITF;ITG,1,Mezzogiorno,Mezzogiorno,,,Mezzogiorno
