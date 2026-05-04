@@ -203,12 +203,16 @@ def populate_dim_source(con: duckdb.DuckDBPyConnection, mappings_dir: Path) -> i
     df = df.apply(lambda c: c.str.strip() if c.dtype == object else c)
     df["priority"] = pd.to_numeric(df["priority"], errors="coerce")
 
+    # Derive provider from source_id prefix if not already in CSV
+    if "provider" not in df.columns:
+        df["provider"] = df["source_id"].str.split("_").str[0]
+
     con.execute("""
         INSERT OR IGNORE INTO dim_source
-            (source_id, source_name, source_name_it, domain, access_type,
+            (source_id, provider, source_name, source_name_it, domain, access_type,
              priority, update_frequency, territorial_levels, temporal_coverage, notes)
         SELECT
-            source_id, source_name, source_name_it, domain, access_type,
+            source_id, provider, source_name, source_name_it, domain, access_type,
             priority, update_frequency, territorial_levels, temporal_coverage, notes
         FROM df
     """)

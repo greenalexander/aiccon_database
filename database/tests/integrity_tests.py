@@ -260,19 +260,19 @@ def check_fact_social_economy(con: duckdb.DuckDBPyConnection, report: TestReport
         ))
 
     # Both sources present
-    for source in ["istat", "eurostat"]:
+    for provider in ["istat", "eurostat"]:
         n_source = _scalar(con, f"""
             SELECT COUNT(*) FROM {table} f
             JOIN dim_source s ON f.source_key = s.source_key
-            WHERE s.source_id = '{source}'
+            WHERE s.provider = '{provider}'
         """)
         report.add(CheckResult(
-            name=f"fact_social_economy:source_{source}",
+            name=f"fact_social_economy:provider_{provider}",
             passed=n_source > 0,
             message=f"{n_source:,} rows",
-            detail=f"No rows from {source} — check ingestion and merge steps",
+            detail=f"No rows from provider '{provider}' — check ingestion and merge steps",
         ))
-
+        
     # Expected indicator codes present
     for code in ["volunteering_rate", "association_membership_rate", "n_employed"]:
         n_ind = _scalar(con, f"""

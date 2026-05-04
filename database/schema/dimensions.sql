@@ -60,13 +60,13 @@ CREATE TABLE IF NOT EXISTS dim_geography (
     geo_source      VARCHAR,            -- 'nuts_istat_csv' / 'manual' / 'iso'
     is_active       BOOLEAN DEFAULT TRUE, -- FALSE for discontinued NUTS codes
 
-    UNIQUE (nuts_code),
-    UNIQUE (istat_code)
+    UNIQUE (nuts_code)
 );
 
 CREATE INDEX IF NOT EXISTS idx_geo_nuts_code  ON dim_geography (nuts_code);
 CREATE INDEX IF NOT EXISTS idx_geo_nuts_level ON dim_geography (nuts_level);
 CREATE INDEX IF NOT EXISTS idx_geo_country    ON dim_geography (country_code);
+CREATE INDEX IF NOT EXISTS idx_geo_istat_code ON dim_geography (istat_code);
 
 
 -- ── dim_time ──────────────────────────────────────────────────────────────────
@@ -112,6 +112,7 @@ CREATE SEQUENCE IF NOT EXISTS seq_source_key START 1;
 CREATE TABLE IF NOT EXISTS dim_source (
     source_key      INTEGER PRIMARY KEY DEFAULT nextval('seq_source_key'),
     source_id       VARCHAR NOT NULL,       -- matches source_id in domain_sources.csv
+    provider        VARCHAR,                -- e.g. 'ISTAT', 'Eurostat', 'Ministero dell'Interno'
     source_name     VARCHAR,
     source_name_it  VARCHAR,
     domain          VARCHAR,                -- primary domain: social_economy / immigration / etc.

@@ -93,6 +93,7 @@ SELECT
 
     -- Source
     ds.source_id,
+    ds.provider,
     ds.source_name,
     ds.priority             AS source_priority,
     ds.access_type,
@@ -208,7 +209,7 @@ SELECT
 FROM vw_social_economy
 WHERE
     indicator_code = 'n_employed'
-    AND source_id  = 'eurostat'
+    AND provider  = 'eurostat'
 ORDER BY year, country_code, nace_code
 ;
 

@@ -444,6 +444,18 @@ def merge_social_economy(config: dict) -> pd.DataFrame:
 
     logger.info(f"After priority resolution: {len(combined):,} rows")
 
+    # ── Final cleanup ────────────────────────────────────────────
+    # Remove eurostat aggregate geo codes that aren't meaningful territories
+    combined["nuts_code"] = combined["nuts_code"].str.strip()
+    combined = combined[~combined["nuts_code"].isin(["EU27_2020", "EU27", "EA", "EA19", "EA20"])]
+
+    # Cast types to be PowerBI-safe
+    combined["time"] = pd.to_numeric(combined["time"], errors="coerce").astype("Int64")
+    combined["nuts_level"] = pd.to_numeric(combined["nuts_level"], errors="coerce").astype("Int64")
+
+    logger.info(f"Final dataset: {len(combined):,} rows")
+
+"""
     # ── Final Geography Enrichment ────────────────────────────────────────────
     try:
         # Load mapping (your CSV uses semicolon and has extra empty columns at the end)
@@ -482,7 +494,7 @@ def merge_social_economy(config: dict) -> pd.DataFrame:
     logger.info(f"Final filtered dataset size: {len(combined):,} rows")
 
     return combined
-
+"""
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
