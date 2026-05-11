@@ -264,9 +264,6 @@ Step 16: database/tests/ — basic integrity checks [Alex check]
 Phase 4 — Entry point + docs
 
 Step 17: run_pipeline.py — single command to run everything 
-
-04/05 istat down -> rerun pipeline.py. There was a single error: 2026-05-04 11:58:43  ERROR     merge.social_economy  Failed to enrich geography: 'paths'
-
-Step 18: docs/data_dictionary.md — field definitions for the social economy tables [Alex check]
-Step 19: docs/source_log.md and docs/decisions.md — templates to fill in [Alex check]
+Step 18: docs/data_dictionary.md — field definitions for the social economy tables 
+Step 19: docs/source_log.md and docs/decisions.md — templates to fill in 
 - ALEX: check again the files within each folder, names, etc. 

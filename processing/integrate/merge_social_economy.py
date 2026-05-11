@@ -455,6 +455,8 @@ def merge_social_economy(config: dict) -> pd.DataFrame:
 
     logger.info(f"Final dataset: {len(combined):,} rows")
 
+    return combined
+
 """
     # ── Final Geography Enrichment ────────────────────────────────────────────
     try:
