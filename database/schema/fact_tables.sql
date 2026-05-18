@@ -18,7 +18,7 @@
 -- • Domain-specific dimension columns (gender, age_group, legal_form_key, etc.)
 --   are added directly to the fact table rather than as separate dimension tables.
 --   This keeps queries simple for PowerBI — one join per dimension is enough
---   for the analytical patterns your colleagues will use.
+--   for the analytical patterns that will be used.
 --
 -- • All non-core columns are NULLABLE. A row from a national-level dataset will
 --   have nuts_level=0 and no legal_form_key. A row from an organisational dataset

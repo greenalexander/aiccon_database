@@ -330,7 +330,7 @@ def check_fact_social_economy(con: duckdb.DuckDBPyConnection, report: TestReport
 
 
 # ── Stub checks for future domains ───────────────────────────────────────────
-# When you add a new domain:
+# When new domains are added:
 # 1. Copy check_fact_social_economy() above
 # 2. Replace table name, view names, source names, and indicator codes
 # 3. Add it to DOMAIN_CHECKS below

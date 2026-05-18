@@ -15,7 +15,7 @@
 --    a. One "base" view that joins the fact table to all dimension tables
 --       and exposes human-readable labels (the pattern used in every domain)
 --    b. One or two "summary" views for the most common query patterns
---       your colleagues will use (e.g. national totals by year, regional map)
+--       (e.g. national totals by year, regional map)
 -- 3. Run build_db.py — it executes this file in full on every run
 -- 4. In PowerBI: refresh the data source — new views appear automatically
 --
@@ -378,7 +378,7 @@ ORDER BY year, nuts_code, nace_code
 -- CROSS-DOMAIN VIEWS
 -- These join data from multiple fact tables and are only possible once
 -- both relevant domains have been built and loaded.
--- Add them here as you build out the platform.
+-- Add them here as the platform is built out.
 -- ════════════════════════════════════════════════════════════════════════════
 
 -- Example: volunteering rate alongside poverty rate by Italian region.

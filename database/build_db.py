@@ -19,8 +19,7 @@ Adding a new domain:
     1. Add the domain name to ACTIVE_DOMAINS below
     2. Add a loader function following the pattern of _load_social_economy()
     3. Register it in DOMAIN_LOADERS
-    That's all — SQL schema changes go in fact_tables.sql and views.sql,
-    not here.
+    SQL schema changes go in fact_tables.sql and views.sql, not here.
 
 Run:
     python -m database.build_db
@@ -429,7 +428,7 @@ def _load_social_economy(con: duckdb.DuckDBPyConnection, config: dict) -> int:
     Load the social economy processed parquet into fact_social_economy.
 
     Adding a new domain:
-        Copy this function, replace 'social_economy' with your domain name,
+        Copy this function, replace 'social_economy' with new domain name,
         update the fact table name and the list of columns being selected,
         and register it with @domain_loader('your_domain_name').
     """

@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS dim_indicator (
 );
 
 -- Pre-populate with all known social economy indicators.
--- Add rows for each new domain as you build them.
+-- Add rows for each new domain as they are built.
 INSERT OR IGNORE INTO dim_indicator
     (indicator_code, label_it, label_en, unit_default, domain, notes)
 VALUES

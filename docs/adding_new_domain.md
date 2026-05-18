@@ -1,68 +1,36 @@
-# Data Dictionary: Social Economy Domain
-This documentation summarizes the architectural pattern for adding new domains to the pipeline. By following this structure, you isolate domain-specific logic while leveraging the shared infrastructure built in the initial phases.
+# Maintenance & Expansion Guide
 
-## Summary of Work
-For each new domain, you typically create **two sets of new Python files** and make small additions to **five existing files**. Everything else is shared infrastructure you never touch.
+## How to add a new Domain (e.g., Welfare)
 
----
+To add a new thematic area to the platform, follow these 4 steps:
 
-## 1. New Files (Domain-Specific)
-*Create these from scratch for every new domain (e.g., using `immigration` as the example).*
+### 1. Update `settings.yaml`
+Add the new domain under the `domains:` key and define its API datasets:
+```yaml
+domains:
+  welfare:
+    enabled: true
 
-### Data Ingestion
-* **`ingestion/api_sources/immigration/`**
-    * `__init__.py`: Standard package initializer.
-    * `eurostat.py`: New fetcher for Eurostat immigration datasets.
-    * `istat.py`: New fetcher for ISTAT immigration datasets.
+eurostat:
+  welfare:
+    - dataset: "spr_exp_sum"
+      label: "Social Protection Expenditure"
+```
 
-### Integration Logic
-* **`processing/integrate/`**
-    * `merge_immigration.py`: The domain-specific merger (equivalent to `merge_social_economy.py`). 
+### 2. Create the Loaders 
+Create new scripts in `ingestion/api_sources/welfare/`.
+Inherit from `BaseLoader(domain="welfare")`. This ensures the raw files go into `raw/welfare/`.
 
----
+### 3. Update the Pipeline 
+In `processing/pipeline.py`, add a `process_welfare()` method.
+- Use the `NutsMapper` to clean geography.
+- Save the result as `processed/fact_welfare.parquet`.
 
-## 2. Files to Edit (Integration)
-*Add a small amount of configuration or logic to these existing files.*
+### 4. Update the Database Schema
+- Fact Table: Add `database/schema/fact_welfare.sql`.
+- View: Add a join in `database/schema/views.sql` to create `v_welfare_comprehensive`.
+- Build Script: Add the new SQL files to `database/build_db.py`.
 
-* **`processing/pipeline.py`**
-    * Import `merge_immigration`.
-    * Add `"immigration": merge_immigration` to the `DOMAIN_PROCESSORS` dictionary.
-* **`config/settings.yaml`**
-    * Set `immigration: enabled: true`.
-    * Add `istat.immigration` and `eurostat.immigration` dataset lists.
-* **`processing/mappings/domain_sources.csv`**
-    * Add rows for the new immigration sources.
-
----
-
-## 3. Database Layer
-*Determined by whether the new domain requires its own storage.*
-
-* **`database/schema/fact_tables.sql`**
-    * Add `CREATE TABLE fact_immigration (...)`.
-* **`database/schema/views.sql`**
-    * (Optional) Add convenience views for the new domain.
-* **`database/build_db.py`**
-    * Add the new fact table to the build sequence.
-
----
-
-## 4. Maintenance & Shared Infrastructure
-
-### Files to Extend (If needed)
-You may need to add rows to these mapping files, but the logic remains the same:
-* `processing/mappings/nuts_istat.csv` (Geography - usually already complete)
-* `processing/mappings/legal_form_map.csv` (Legal entities)
-* `processing/mappings/nace_labels.csv` (Economic activities)
-
-### Shared Files (Do Not Touch)
-These files are domain-agnostic and should remain unchanged:
-
-| Category | File | Role |
-| :--- | :--- | :--- |
-| **Loaders** | `ingestion/loaders/base_loader.py` | Shared base logic |
-| **Loaders** | `ingestion/loaders/sharepoint_uploader.py` | Shared uploader |
-| **Harmonization** | `processing/harmonise/nuts_mapper.py` | Universal NUTS mapping |
-| **Harmonization** | `processing/harmonise/legal_form.py` | Universal legal form logic |
-| **Database** | `database/schema/dimensions.sql` | Shared dimension tables |
-| **Entry Point** | `run_pipeline.py` | Shared execution entry point |
+## Troubleshooting 
+- API Errors: Check `pipeline_log.json`. If ISTAT is down, wait 1 hour and run `update_database.bat` again.
+- Mapping Errors: If a NUTS code shows as "Unknown" in PowerBI, add the missing row to `processing/mappings/nuts_istat.csv`.

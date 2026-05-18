@@ -2,30 +2,45 @@
 
 Contextual statistics platform for AICCON research and projects. Integrates European, national (Italy), and subnational data across the thematic areas of AICCON's work — social economy, welfare, immigration, social impact, and sustainable development — and makes them available through PowerBI dashboards.
 
+Statistical context platform for AICCON research and projects. Collects data from European and Italian public APIs, harmonises it into a unified database divided into thematic (social economy, welfare, immigration, poverty, labour market, SDGs, and housing), and serves it to colleagues through PowerBI dashboards.
+
+Maintained by one person. Updated monthly via a local Python pipeline. Colleagues access the data through PowerBI only — no coding required on their end.
+
 ---
 
 ## Purpose
 
 Researchers and project staff at AICCON regularly need statistical context for their work: size of the third sector in a given region, poverty rates, immigration flows, SDG indicator progress, social spending trends. This project collects that data from authoritative public sources, integrates it into a unified database keyed by geography and time, and surfaces it in PowerBI for filtering and exploration.
 
-The database is maintained by one person and updated approximately monthly via automated Python scripts. Colleagues access it through PowerBI only — no coding required on their end.
+A Python pipeline fetches data from Eurostat and ISTAT APIs, harmonises geographic codes (NUTS/ISTAT), legal form classifications, and indicator units, then loads everything into a DuckDB star schema. PowerBI connects to the resulting `.duckdb` file on SharePoint.
+
+```
+APIs (Eurostat, ISTAT)
+        ↓  ingest
+raw parquet files (SharePoint/aiccon-data/raw/)
+        ↓  process
+processed parquet files (SharePoint/aiccon-data/processed/)
+        ↓  database
+aiccon.duckdb (SharePoint/aiccon-data/database/)
+        ↓
+PowerBI dashboards
+```
 
 ---
 
 ## Thematic domains
 
-Each domain is a self-contained collection of datasets and indicators, stored as a separate set of parquet files and exposed as its own fact table in the database. All domains share the same geography, time, and source dimension tables.
+The database is organised into thematic domains. Each domain is a self-contained set of datasets sharing the same geographic and time dimensions. All domains share the same dimension tables — adding a new domain never requires changing existing tables.
 
-| Domain | Description | Key sources |
+| Domain | Status | Description |
 |---|---|---|
-| **Social economy** | Third sector organisations (cooperative sociali, ODV, APS, fondazioni, ETS), employment, revenue, legal form breakdowns | ISTAT, RUNTS, Registro Imprese, Eurostat |
-| **Welfare and social policies** | Social spending, public social services, long-term care, disability, childcare | ISTAT, Eurostat, OECD |
-| **Poverty and inequality** | At-risk-of-poverty rates, material deprivation, income inequality (Gini), food poverty | ISTAT (BES), Eurostat (EU-SILC), OECD |
-| **Immigration** | Resident foreign population, nationalities, work permits, asylum requests, integration indicators | ISTAT, Ministero dell'Interno, Eurostat |
-| **Labour market** | Employment and unemployment rates, precarious work, gender gaps, youth employment | ISTAT (RCFL), Eurostat (LFS) |
-| **Sustainable development (SDGs)** | Italy and EU progress on Agenda 2030 indicators, mapped to AICCON research focus areas | ISTAT (SDGs), Eurostat (SDG monitoring) |
-| **Social impact and civil society** | Volunteering rates, social capital indicators, civic engagement, philanthropic giving | ISTAT, CSVnet, Fondazioni Italia |
-| **Housing and urban welfare** | Housing affordability, homelessness, social housing, urban regeneration indicators | ISTAT, Eurostat, Federcasa |
+| **Social economy** | Volunteering rates, associationism, employment in social sectors, local units by NACE |
+| **Immigration** | Resident foreign population, permits, asylum applications |
+| **Welfare** | Social spending, services, long-term care |
+| **Poverty** | At-risk-of-poverty, material deprivation, inequality |
+| **Labour** | Employment, unemployment, gender gaps, precarious work |
+| **SDGs** | Italy and EU progress on Agenda 2030 indicators |
+| **Housing** | Affordability, social housing, homelessness |
 
 New domains can be added without modifying the existing database structure. See [Adding a new domain](#adding-a-new-domain) below.
 
@@ -39,8 +54,6 @@ New domains can be added without modifying the existing database structure. See 
 |---|---|---|
 | Eurostat | SDMX / JSON API | EU27, NUTS0–2, all available years |
 | ISTAT | SDMX API (dati.istat.it) | Italy, NUTS0–3, all available years |
-| ECB | REST API | Euro area macro context |
-| UN / OECD | SDMX / JSON API | International comparisons |
 
 ### Manual downloads (not automated)
 
@@ -60,34 +73,49 @@ Manual files are stored in `ingestion/manual_sources/` and are **not committed t
 ```
 aiccon-data/
 ├── ingestion/
-│   ├── api_sources/          # One script per API (eurostat.py, istat.py, ecb.py, ...)
-│   ├── manual_sources/       # Raw downloaded files — gitignored
-│   ├── loaders/              # base_loader.py, sharepoint_uploader.py
-│   └── schemas/              # Raw layer validation schemas (pandera)
+│   ├── api_sources/
+│   │   └── each_domain/
+│   │       ├── eurostat.py        fetches Eurostat datasets
+│   │       └── istat.py           fetches ISTAT datasets
+│   ├── loaders/
+│   │   ├── base_loader.py         shared base class, retry logic, parquet I/O
+│   │   └── sharepoint_uploader.py writes files to SharePoint synced folder
+│   └── manual_sources/            raw downloaded files — gitignored
 │
 ├── processing/
-│   ├── harmonise/            # nuts_mapper.py, nace_mapper.py, legal_form_normaliser.py
-│   ├── integrate/            # merge_sources.py, priority_resolver.py
-│   ├── mappings/             # Mapping tables as plain CSV files:
-│   │   ├── nuts_istat.csv    #   NUTS <-> ISTAT municipality/province codes
-│   │   ├── legal_form_map.csv#   Italian legal forms <-> NACE / Eurostat categories
+│   ├── harmonise/
+│   │   ├── nuts_mapper.py         ISTAT codes → NUTS codes
+│   │   └── legal_form.py          source legal forms → unified categories
+│   ├── integrate/
+│   │   └── merge_social_economy.py harmonise + merge all social economy sources
+│   │   └── merge_other_domains.py harmonise + merge file for each domain
+│   ├── mappings/
+│   │   ├── nuts_istat.csv         NUTS ↔ ISTAT territorial codes (all 107 provinces)
+│   │   ├── legal_form_map.csv     Italian legal forms ↔ unified categories ↔ NACE
+│   │   ├── nace_labels.csv        NACE Rev.2 codes with Italian/English labels
 │   │   ├── sdg_indicators.csv#   SDG goal+target <-> ISTAT/Eurostat indicator codes
-│   │   └── domain_sources.csv#   Which sources feed which domain, with priority rank
-│   └── pipeline.py           # Orchestrates the full processing run
+│   │   └── domain_sources.csv     source registry with priority and coverage
+│   └── pipeline.py                orchestrates processing for all active domains
 │
 ├── database/
-│   ├── schema/               # star_schema.sql, create_views.sql
-│   ├── build_db.py           # Reads parquet from SharePoint -> builds .duckdb file
-│   └── tests/                # Row count checks, null checks, key uniqueness
+│   ├── schema/
+│   │   ├── dimensions.sql         shared dimension tables (geo, time, source, indicator)
+│   │   ├── fact_tables.sql        one fact table per domain, stubs for future domains
+│   │   └── views.sql              analytical views consumed by PowerBI
+│   ├── build_db.py                builds aiccon.duckdb from processed parquet
+│   └── tests/
+│       └── test_integrity.py      row counts, null checks, orphan key checks
 │
 ├── config/
-│   ├── settings.yaml         # SharePoint paths, API endpoints, domain scope config
-│   └── .env.example          # Credential template (copy to .env, never commit)
+│   ├── settings.yaml              SharePoint paths, active domains, API scope
+│   └── .env.example               credential template (copy to .env)
 │
 ├── docs/
-│   ├── data_dictionary.md    # Field definitions and units for every table
-│   ├── source_log.md         # Manual download dates and source URLs
-│   └── decisions.md          # Log of mapping choices and priority rules, with rationale
+│   ├── data_dictionary.md         field definitions and units for every table
+│   ├── source_log.md              download dates, dataset codes, known issues
+│   ├── maintenance.md             how to add new domains
+│   ├── source_log.md              download dates, dataset codes, known issues
+│   └── decisions.md               architectural and data decisions with rationale
 │
 ├── run_pipeline.py           # Entry point: ingest -> process -> build database
 ├── requirements.txt
@@ -99,171 +127,143 @@ aiccon-data/
 
 ## Setup
 
-**Requirements**: Python 3.11+
+**Requirements**: Python 3.11+, OneDrive sync client running
 
 ```bash
 git clone 
 cd aiccon-data
 pip install -r requirements.txt
 cp config/.env.example config/.env
-# Edit config/.env — add SharePoint credentials and any API tokens
 ```
 
-Set your SharePoint folder paths and the domains you want to activate in `config/settings.yaml`.
+Edit `config/.env` and set `SHAREPOINT_ROOT` to the full path of your SharePoint synced folder.
 
 ---
 
 ## Running the pipeline
 
+**Full monthly update** (all stages, all active domains):
 ```bash
 python run_pipeline.py
 ```
-
-Runs the full pipeline in sequence:
-1. **Ingest** — fetches from all active APIs; reads any new manual source files
-2. **Process** — harmonises geography (NUTS/ISTAT codes), maps legal forms and indicator codes, resolves source priority, writes parquet to SharePoint
-3. **Build** — reads processed parquet from SharePoint, builds the DuckDB star schema, exports `.duckdb` for PowerBI
-
-Run a single stage or domain:
+**Single stage**:
 ```bash
-python run_pipeline.py --stage ingest
-python run_pipeline.py --stage process
-python run_pipeline.py --stage database
-
-python run_pipeline.py --domain social_economy
-python run_pipeline.py --domain immigration
+python run_pipeline.py --stage ingest     # fetch from APIs only
+python run_pipeline.py --stage process    # re-process existing raw files
+python run_pipeline.py --stage database   # rebuild DuckDB only (fastest)
 ```
 
-**Update frequency**: monthly. Every parquet file includes an `extracted_at` timestamp column.
+**Single domain** (useful when building or debugging a new domain):
+```bash
+python run_pipeline.py --domain social_economy
+```
+
+**Integrity checks** (run after every build):
+```bash
+python -m database.tests.test_integrity
+```
+
+### When to run which stage
+
+| Situation | Command |
+|---|---|
+| Monthly update | `python run_pipeline.py` |
+| Fixed a mapping CSV, no new data | `python run_pipeline.py --stage process` then `--stage database` |
+| Fixed a bug in a merge script | `python run_pipeline.py --stage database` |
+| Building a new domain | `python run_pipeline.py --domain {new_domain}` |
+
+### Debugging failures
+
+1. Read terminal output — `ERROR` lines include the full Python traceback
+2. Check `pipeline_log.json` in SharePoint `database/` folder for a structured JSON summary
+3. Run the failing stage in isolation: `python run_pipeline.py --stage process --domain social_economy`
+4. Run individual scripts directly for maximum detail:
+   `python -m ingestion.api_sources.social_economy.istat`
 
 ---
 
-## Data architecture
+## Database schema
 
-### Storage layers within Sharepoint
+### Shared dimension tables (never change when adding a domain)
 
-| Layer | Format | SharePoint path | Description |
-|---|---|---|---|
-| Raw | Parquet | `/raw/{domain}/` | Source data as-received, with `extracted_at`. Never modified after writing. |
-| Processed | Parquet | `/processed/{domain}/` | Harmonised: unified NUTS keys, normalised categories, deduplicated, priority-resolved |
-| Database | DuckDB (`.duckdb`) | `/database/` | Star schema consumed by PowerBI |
+| Table | Description |
+|---|---|
+| `dim_geography` | All territories from EU countries to Italian provinces (NUTS0–3) |
+| `dim_time` | Annual periods 1990–2030 |
+| `dim_source` | Source registry with priority ranking |
+| `dim_legal_form` | Italian legal forms mapped to unified categories and NACE |
+| `dim_indicator` | Indicator catalogue with Italian and English labels |
 
-### Database schema (star model)
+### Fact tables (one per domain)
 
-**Shared dimension tables** — written once, reused by every domain:
-
-| Table | Key fields | Description |
+| Table | Status | Key dimensions |
 |---|---|---|
-| `dim_geography` | `geo_key`, `nuts_code`, `istat_code`, `name_it`, `name_en`, `level` | All territories from comune to EU country |
-| `dim_time` | `time_key`, `year`, `reference_period` | Annual and sub-annual periods |
-| `dim_source` | `source_key`, `source_name`, `access_type`, `priority`, `update_freq` | Source registry with priority ranking |
+| `fact_social_economy` | legal_form, nace_code, gender, age_group, volunteering_form, org_type, association_type |
+| `fact_immigration` | nationality, permit_type, migration_flow |
+| `fact_welfare` | service_type, beneficiary_group |
+| `fact_poverty` | population_group, deprivation_type |
+| `fact_labour` | contract_type, nace_code, gender, age_group |
+| `fact_sdg` | sdg_goal, sdg_target |
+| `fact_housing` | tenure_type |
 
-**Domain fact tables** — one per thematic area, all sharing the same dimension tables:
+### PowerBI views
 
-| Table | Domain | Additional dimensions |
-|---|---|---|
-| `fact_social_economy` | Social economy | legal_form, nace_code |
-| `fact_welfare` | Welfare and social policies | service_type, beneficiary_group |
-| `fact_poverty` | Poverty and inequality | population_group, deprivation_type |
-| `fact_immigration` | Immigration | nationality, permit_type |
-| `fact_labour` | Labour market | gender, age_group, contract_type |
-| `fact_sdg` | SDGs | sdg_goal, sdg_target |
-| `fact_civil_society` | Social impact / civil society | org_type |
-| `fact_housing` | Housing and urban welfare | tenure_type |
+Connect PowerBI to these views rather than the raw fact tables. For instance, for the social economy:
 
-All fact tables share the same core fields: dimension foreign keys, `indicator_code`, `value`, `unit`, and `extracted_at`.
-
-### Key mapping decisions
-
-**Geography**: NUTS codes are the universal join key. ISTAT province and municipality codes are mapped to NUTS3 via `mappings/nuts_istat.csv`. Data available only at comune level is stored at that granularity and aggregated upward for higher levels.
-
-**Legal form**: Italian third sector categories (cooperativa sociale, ODV, APS, etc.) have no direct Eurostat equivalent. They are mapped to NACE Rev. 2 codes for European comparisons and retained verbatim for domestic data. See `mappings/legal_form_map.csv`.
-
-**Source priority** when the same indicator appears in multiple sources:
-1. ISTAT — most granular for Italy; preferred for all domestic indicators
-2. Eurostat — EU comparisons and gaps in ISTAT coverage
-3. RUNTS / Registro Imprese — entity counts, legal form breakdowns
-4. OECD / UN — international comparisons, SDG baselines
-5. ECB — macro context only
-
-Full rationale for individual decisions is logged in `docs/decisions.md`.
+| View | Description |
+|---|---|
+| `vw_social_economy` | Full flat view — primary PowerBI source for social economy |
+| `vw_se_volunteering_national` | National volunteering rates by year — line charts |
+| `vw_se_volunteering_regional` | Regional volunteering rates — map visuals |
+| `vw_se_associationism_national` | Association membership rates by demographic |
+| `vw_se_employment_eu` | EU employment comparison by NACE |
+| `vw_se_local_units_regional` | Local units by NACE and region — density maps |
 
 ---
 
 ## Adding a new domain
 
-1. Add a script to `ingestion/api_sources/` (or a folder to `ingestion/manual_sources/`)
-2. Add a validation schema to `ingestion/schemas/`
-3. Add any new category mappings to `processing/mappings/`
-4. Add a new fact table definition to `database/schema/star_schema.sql`
-5. Register the domain and its sources in `config/settings.yaml`
-6. Document indicators, units, and sources in `docs/data_dictionary.md`
-7. Log the decision (including sources evaluated and not chosen) in `docs/decisions.md`
+The social economy domain is the template. For each new domain:
+
+1. **Create fetcher scripts** in `ingestion/api_sources/{domain}/`
+   following `social_economy/eurostat.py` and `social_economy/istat.py`
+
+2. **Create a merge script** at `processing/integrate/merge_{domain}.py`
+   following `merge_social_economy.py`
+
+3. **Register in three places**:
+   - `run_pipeline.py` → add loader classes to `DOMAIN_INGESTION_CLASSES`
+   - `processing/pipeline.py` → add to `DOMAIN_PROCESSORS`
+   - `database/build_db.py` → add to `DOMAIN_LOADERS`
+
+4. **Fill in the stubs**:
+   - `database/schema/fact_tables.sql` → replace `-- TODO` with actual columns
+   - `database/schema/views.sql` → add base view and summary views
+   - `database/tests/test_integrity.py` → fill in the stub check function
+
+5. **Enable the domain**:
+   - `config/settings.yaml` → set `enabled: true`
+   - `processing/mappings/domain_sources.csv` → add source rows
+
+6. **Document**:
+   - `docs/data_dictionary.md` → add field definitions
+   - `docs/source_log.md` → add dataset codes and download dates
+   - `docs/decisions.md` → log any non-obvious choices
 
 ---
 
-## What is not in this database
+## Known limitations
 
-This database provides **contextual statistics** — aggregate indicators from official public sources. It does not contain:
-- Microdata or individual-level records
-- Data not available from public APIs or official publications
-- Real-time data (updates are monthly at most)
-- Internal AICCON project data or client information
+- **NACE O-U at NUTS2**: Eurostat regional employment (`nama_10r_3empers`) only provides the O-U aggregate at NUTS2. Q, P, and S94 are not separable at regional level. Use `lfsa_egan22d` for sector detail (national level only).
+
+- **RUNTS, Registro Imprese, Agenzia delle Entrate** are not API-integratable. They require manual downloading of data and integration.
+
+- **Single-writer database**: DuckDB does not support concurrent writes. This is not a current issue (one maintainer, monthly batch updates) but would need to change if the project moves to multi-user cloud execution.
 
 ---
 
 ## Maintainer
 
-**[Alexander Green]** — AICCON  
-Last pipeline run: see SharePoint `/database/pipeline_log.json`  
-Contact: [alexander.green@unibo.it]
-
-
-
---- 
-Build plan — social economy pipeline
-Phase 0 — Foundations (do once, reused by all future domains)
-
-Step 1: requirements.txt and .gitignore
-Step 2: config/settings.yaml and config/.env.example
-Step 3: processing/mappings/ — the three core CSV mapping tables
-Step 4: ingestion/loaders/base_loader.py — shared loading utilities 
-Step 5: ingestion/loaders/sharepoint_uploader.py — writes parquet to SharePoint
-
-Phase 1 — Ingest (social economy data only)
-
-Step 6: ingestion/api_sources/social_economy/eurostat.py — pull NACE Q + S94 employment at NUTS0/NUTS2 for all EU countries 
-Step 7: ingestion/api_sources/social_economy/istat.py — pull ISTAT nonprofit census and cooperative data at NUTS3, with gender 
-
-ALEX:
--- update readme and yaml on the basis of eurostat: changed datasets and filters for eurostat. 
--- Same thing with readme and yaml for istat
--- update docs/source_log.md
--- update mappings/domain_sources.csv
-
-
-Phase 2 — Process
-
-Step 8: processing/harmonise/nuts_mapper.py — ISTAT codes → NUTS codes 
-Step 9: processing/harmonise/legal_form.py — Italian legal forms → unified categories 
-Step 10: processing/integrate/merge_sources.py — combine Eurostat + ISTAT with priority rules 
-Step 11: processing/pipeline.py — wire steps 6–10 together for social economy
-
-ALEX:
--- check output here. 
-
-Phase 3 — Database
-
-Step 12: database/schema/dimensions.sql — dim_geography, dim_time, dim_source [Alex check]
-Step 13: database/schema/fact_tables.sql — fact_social_economy [Alex check]
-Step 14: database/schema/views.sql — pre-built views useful for PowerBI [Alex check]
-Step 15: database/build_db.py — reads processed parquet, builds .duckdb [Alex check]
-
-Step 16: database/tests/ — basic integrity checks [Alex check]
-
-Phase 4 — Entry point + docs
-
-Step 17: run_pipeline.py — single command to run everything 
-Step 18: docs/data_dictionary.md — field definitions for the social economy tables 
-Step 19: docs/source_log.md and docs/decisions.md — templates to fill in 
-- ALEX: check again the files within each folder, names, etc. 
+**[Alexander Patrick Green]** — AICCON
+Last pipeline run: see SharePoint `aiccon-data/database/pipeline_log.json`
+Contact: [alexander.green@aiccon.it]
